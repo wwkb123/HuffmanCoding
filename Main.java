@@ -68,6 +68,7 @@ class Main {
       HuffmanNode node = new HuffmanNode((char)i + "",freqTable[i]);
       q.insert(node);
   }
+
 /*
   q.insert(new HuffmanNode("a",1));
   q.insert(new HuffmanNode("b",2));
@@ -83,6 +84,13 @@ class Main {
 
  */ 
   q.printHeap();
+
+  System.out.println(q.size);
+  q.removeMin();
+  q.removeMin();
+
+  q.printHeap();
   
+  q.levelOrderPrint();
   }
 }

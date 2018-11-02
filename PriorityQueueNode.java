@@ -14,4 +14,8 @@ class PriorityQueueNode {
   public boolean isLeaf() {
     return (heapLeft == null && heapRight == null);
   }
+
+  public int getCount(){ // get HuffmanNode's count
+    return data.getCount();
+  }
 }

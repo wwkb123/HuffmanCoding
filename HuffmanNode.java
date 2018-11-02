@@ -45,4 +45,8 @@ class HuffmanNode {
   public boolean lowerCount(HuffmanNode otherNode) {
     return (this.count < otherNode.count);
   }
+
+  public int getCount(){
+    return count;
+  }
 }
