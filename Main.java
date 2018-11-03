@@ -10,7 +10,7 @@ class Main {
 
     
 
-    String mytext = "abbcccddddeeeeeffffff";
+    String mytext = "ashduashdkahwkuahwrkuarh";
 
     int[] freqTable = new int[128];
 
@@ -67,6 +67,7 @@ class Main {
       if(freqTable[i] == 0) continue;
       HuffmanNode node = new HuffmanNode((char)i + "",freqTable[i]);
       q.insert(node);
+      q.levelOrderPrint();
   }
 
 /*

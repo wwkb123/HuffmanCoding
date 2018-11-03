@@ -21,8 +21,6 @@ public class PriorityQueue {
     System.out.println("Current size is "+size);
     System.out.println("Path is "+path(size));
 
-
-   //to do: up bubble
     if(root == null){ //first insert
       root = n;
       size++; //next position to be inserted will be size++
@@ -31,10 +29,27 @@ public class PriorityQueue {
       if(size % 2 == 0){ //left
         parent.heapLeft = n;  //insert left child
         parent.heapLeft.heapParent = parent; //link the child back to its parent
-      }else{
+      }else{  //right
         parent.heapRight = n;
         parent.heapRight.heapParent = parent;
       }
+
+      //----------bubbling up-------------//
+
+
+      PriorityQueueNode curr = getNode(size); //get the node we just inserted
+      while(curr.heapParent != null){
+        if(curr.heapParent.getCount() > curr.getCount()){
+          swap(curr.heapParent, curr);
+          curr = curr.heapParent;
+        }else{
+          break;  //finish
+        }
+      } //end of while loop
+
+
+      //----------end of bubbling up-------------//
+
       size++;
     }
     
@@ -203,28 +218,28 @@ public class PriorityQueue {
 			PriorityQueueNode n = q.remove();
 			nodeCount++;
 				
-			printSpace(height*(height-level)); //
+			printSpace(height*(height-level)); //print space between nodes on the same level
 				
 			if(n != null){
 					
 				System.out.print(n.getCount());
-				printSpace(height);   //
+				printSpace(height);   
 				q.add(n.heapLeft);
 				q.add(n.heapRight);
 				
 			}
 			else{
-					
+				// * is a null node
 				System.out.print("*");
         printSpace(height);
 					
 			}
-			//if(nodeCount % 2 == 0) printSpace(0); 
+			//if(nodeCount % 2 == 0) printSpace(1); 
 				
 			if(nodeCount == (int)Math.pow(2, level)){
-				nodeCount = 0;
+				nodeCount = 0;  // reset the count for the next level
 				System.out.println("");
-				level++;
+				level++;  // to the next level
 			}
 		}
 	}
