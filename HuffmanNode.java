@@ -43,6 +43,20 @@ class HuffmanNode {
     recursivePrint(n.huffRight, s + "1");
   }
 
+  public void makeTable(){
+    recursiveMakeTable(this, "");
+  }
+
+  public void recursiveMakeTable(HuffmanNode n, String s){
+    if (n == null)
+      return;
+    recursiveMakeTable(n.huffLeft, s + "0");
+    if (n.text.length() == 1) { // is leaf
+      System.out.println(n.text + " " + s);
+    }
+    recursiveMakeTable(n.huffRight, s + "1");
+  }
+
   public boolean lowerCount(HuffmanNode otherNode) {
     return (this.count < otherNode.count);
   }

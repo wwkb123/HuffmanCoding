@@ -93,6 +93,8 @@ public class PriorityQueue {
     }else{
       parent.heapRight = null;
     }
+
+    nextPosition--;
     
     //----------bubbling down-------------//
 
@@ -146,7 +148,7 @@ public class PriorityQueue {
 
     }  //end of while loop
 
-    nextPosition--;
+    
 
 
     //----------end of bubbling down-------------//
@@ -229,7 +231,10 @@ public class PriorityQueue {
 
   public void levelOrderPrint(){
     System.out.println("\nLevel Order Print:");
-    if(root == null) return;
+    if(root == null) {
+      System.out.print("*");
+      return;
+    }
     Queue<PriorityQueueNode> q = new LinkedList<PriorityQueueNode>();
 		PriorityQueueNode curr = root;
 		q.add(curr);
