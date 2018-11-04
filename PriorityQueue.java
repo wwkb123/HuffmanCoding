@@ -30,9 +30,9 @@ public class PriorityQueue {
         /*left child is always with odd number position, 
         for example:
 
-          0
-         / \
-        1   2
+                  0
+                 / \
+            ->  1   2
 
         */
       

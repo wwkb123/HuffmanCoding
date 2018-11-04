@@ -8,16 +8,7 @@ class Main {
   //The main routine here. Add other classes as needed
   public static void main(String[] args) {
 
-    FileParser test = new FileParser("test.txt","c");
-
-/*
-
-
-
-
-
-
-  
-  */
+    FileParser compress = new FileParser("test.txt","c");
+    FileParser decompress = new FileParser("output.txt","d");
   }
 }
