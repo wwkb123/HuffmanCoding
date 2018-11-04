@@ -3,11 +3,11 @@ import java.util.LinkedList;
 
 public class PriorityQueue {
   PriorityQueueNode root;
-  int size;
+  int nextPosition;
 
   public PriorityQueue() {
     root = null;
-    size = 1;  //let position starts from 1
+    nextPosition = 0;  //let position starts from 0
   }
 
   public void insert(HuffmanNode n) {
@@ -18,26 +18,37 @@ public class PriorityQueue {
   // inserting a new node into the heap
   public void insert(PriorityQueueNode n) {
 
-    System.out.println("Current size is "+size);
-    System.out.println("Path is "+path(size));
+    //System.out.println("Current nextPosition is "+nextPosition);
+    //System.out.println("Path is "+path(nextPosition));
 
     if(root == null){ //first insert
       root = n;
-      size++; //next position to be inserted will be size++
+      nextPosition++; //next position to be inserted will be nextPosition++
     }else{
-      PriorityQueueNode parent = getNode(size/2);  //locate the parent which we already have its reference, so we can link a new node to the tree
-      if(size % 2 == 0){ //left
+      PriorityQueueNode parent = getNode((nextPosition-1)/2);  //locate the parent which we already have its reference, so we can link a new node to the tree
+      if(nextPosition % 2 == 1){ 
+        /*left child is always with odd number position, 
+        for example:
+
+          0
+         / \
+        1   2
+
+        */
+      
         parent.heapLeft = n;  //insert left child
         parent.heapLeft.heapParent = parent; //link the child back to its parent
-      }else{  //right
+      }else{  //right child is always with even number position
         parent.heapRight = n;
         parent.heapRight.heapParent = parent;
       }
 
+      nextPosition++;
+
       //----------bubbling up-------------//
 
 
-      PriorityQueueNode curr = getNode(size); //get the node we just inserted
+      PriorityQueueNode curr = getNode(nextPosition-1); //get the node we just inserted
       while(curr.heapParent != null){
         if(curr.heapParent.getCount() > curr.getCount()){
           swap(curr.heapParent, curr);
@@ -50,7 +61,7 @@ public class PriorityQueue {
 
       //----------end of bubbling up-------------//
 
-      size++;
+      
     }
     
     
@@ -65,21 +76,25 @@ public class PriorityQueue {
 
     */
     if(root == null) return null;
-
     HuffmanNode removedNode = root.data; //min node should be at the top, i.e. the root
-    swap(root,getNode(size-1)); //size is the next position to be inserted, so size-1 will be the previous inserted node, i.e. the right most node on the lowest level. Now swap root with it
 
-    PriorityQueueNode parent = getNode((size-1)/2);  //find the parent of right most node on the lowest level
+    if(nextPosition == 1){ // so previous position is 0, the tree contains only root
+      root = null;
+      nextPosition--;
+      return removedNode;
+    }
+
+    swap(root,getNode(nextPosition-1)); //nextPosition is the next position to be inserted, so nextPosition-1 will be the previous inserted node, i.e. the right most node on the lowest level. Now swap root with it
+
+    PriorityQueueNode parent = getNode(((nextPosition-1)-1)/2);  //find the parent of right most node on the lowest level, nextPosition-1 -> previous position, (previous position-1)/2 -> its parent
     
-    if((size-1) % 2 == 0){ //left
+    if((nextPosition-1) % 2 == 1){ //if the right most node is with odd number position, so it is a left child 
       parent.heapLeft = null;  //remove left child
     }else{
       parent.heapRight = null;
     }
     
     //----------bubbling down-------------//
-
-    //TODO  handle equal value case
 
     PriorityQueueNode curr = root;
 
@@ -131,7 +146,7 @@ public class PriorityQueue {
 
     }  //end of while loop
 
-    size--;
+    nextPosition--;
 
 
     //----------end of bubbling down-------------//
@@ -156,13 +171,13 @@ public class PriorityQueue {
       return null;
     
     String answer = "";
-    while (position > 1) {
-      if (position % 2 == 0) { // left branch
+    while (position > 0) {
+      if (position % 2 == 1) { // left branch
         answer = "L" + answer; // prepend
       } else { // right branch
         answer = "R" + answer;
       }
-      position /= 2;
+      position = (position-1)/2;
     }
     return answer;
   }
@@ -171,7 +186,7 @@ public class PriorityQueue {
   public PriorityQueueNode getNode(int position) {
     if (position < 0)
       return null;
-    if (position == 1)
+    if (position == 0)
       return root;
     
     String path = path(position);
@@ -204,13 +219,21 @@ public class PriorityQueue {
     recursivePrintHeap(n.heapRight, s);
   }
 
+  public boolean isEmpty(){
+    return root == null;
+  }
+
+  public int getSize(){
+    return nextPosition; //next position should be equal to the size
+  }
+
   public void levelOrderPrint(){
     System.out.println("\nLevel Order Print:");
     if(root == null) return;
     Queue<PriorityQueueNode> q = new LinkedList<PriorityQueueNode>();
 		PriorityQueueNode curr = root;
 		q.add(curr);
-    int height = (int) (Math.log(size)/Math.log(2));
+    int height = (int) (Math.log(nextPosition)/Math.log(2));
 		int nodeCount = 0;
 		int level = 0;
 

@@ -22,6 +22,7 @@ class HuffmanNode {
     left.huffParent = this;
     huffRight = right;
     right.huffParent = this;
+    
   }
 
   public String toString() {
