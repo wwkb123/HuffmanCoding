@@ -28,6 +28,7 @@ public class FileParser{
           printFreqTable(freqTable); //debugging
 
           q = new PriorityQueue();
+          table = new HuffmanTreeTable();
 
           //inserting nodes to the queue
           for(int i = 0; i < freqTable.length; i++){
@@ -37,8 +38,8 @@ public class FileParser{
           }
           //finish inserting
 
-          makeHuffmanTree(q);
-
+          makeHuffmanTreeTable(q, table);
+          table.printTable();
 
 
           
@@ -62,13 +63,14 @@ public class FileParser{
 
 
   public void printFreqTable(int[] freqTable){
+    System.out.println("Character : Frequency");
     for(int i = 0; i < freqTable.length; i++){
       if(freqTable[i] == 0) continue;
       System.out.println((char)i + " : " + freqTable[i]);
     }
   }
 
-  public void makeHuffmanTree(PriorityQueue q){
+  public void makeHuffmanTreeTable(PriorityQueue q, HuffmanTreeTable table){
     while (q.getSize() > 1) {
       HuffmanNode left = q.removeMin();
       System.out.println("Removed " + left + " from the heap");
@@ -86,10 +88,8 @@ public class FileParser{
       System.out.println();
     }
 
-    System.out.println("\n===Huffman Code Table===\n");
-    HuffmanNode huffTree = q.removeMin();
-
-    huffTree.makeTable();
+    HuffmanNode huffTree = q.removeMin(); //last item in the queue
+    huffTree.makeTable(table); //generate a huffman tree table
   }
 
 }

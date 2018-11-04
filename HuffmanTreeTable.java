@@ -1,4 +1,7 @@
 import java.util.HashMap;
+import java.util.Set;
+import java.util.HashSet;
+//HuffmanTreeTable that maps text:huffmanCode, or huffmanCode:text
 
 public class HuffmanTreeTable extends HashMap{
 
@@ -8,10 +11,9 @@ public class HuffmanTreeTable extends HashMap{
 
 
   //get the value using the key
-  public int getValue(String text) {  
-    Integer count = (Integer) super.get(text);
-    if (count == null) return -1;
-    return count;
+  public String get(String text) {  
+    String huffmanCode = (String) super.get(text);
+    return huffmanCode;
   }
 
 
@@ -28,20 +30,26 @@ public class HuffmanTreeTable extends HashMap{
 
   }
 
-  public void put(String text, int count){
-    super.put(text, count);
+  public void put(String text, String huffmanCode){
+    super.put(text, huffmanCode);
   }
 
-  public int remove(String text){
-    Integer count = (Integer) super.remove(text);
-    if (count == null) return -1;
-    return count;
+  public String remove(String text){
+    String huffmanCode = (String) super.remove(text);
+    return huffmanCode;
   }
 
   public boolean containsKey(String text){
     return super.containsKey(text);
   }
 	
+  public void printTable(){
+    System.out.println("\n===Huffman Code Table===\n");
+    HashSet<String> keySet = new HashSet<String>((Set<String>)super.keySet()); //create a set that contains all the keys in the table
+    for (String key : keySet) {
+    System.out.println (key + ":" + get(key));  //print
+    }
+  }
 
 
 
