@@ -1,4 +1,4 @@
-class HuffmanNode {
+public class HuffmanNode {
   String text;
   int count;
 

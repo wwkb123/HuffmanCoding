@@ -8,7 +8,8 @@ Note:
 1. *** -> extra things that I implemented
 2. To make this documentation more readable, some complex logics may not be explained here as they will take a lot of space. They are explained inside the class instead.
 3. The huffman codes generated in this program can be different from other implementations as I didn't ask the nodes to swap when they have the same count. But since this will still make a correct corresponding Huffman tree table, I can still get correct compressions and decompressions.
-4. Only repl.it, somehow I cannot compress a file and decompress it immediately. I must exit the program and run it again to decompress the file.
+4. Only repl.it, somehow I cannot compress a file and decompress it immediately. I must exit the program and run it again to decompress the file. Also, sometimes if the input file is too large, repl's buffer will write wrong outputs to the file. Please re-open this repl when this occurs.
+5. Originally, I used format a:0101,b:000,  to represent the decoding chart. Since I want to include other symbols like , :  as well so I change the format to a~0101`b~000, where ~ acts like colon(:) and ` acts like comma(,). So in some parts of the documentation/comment, if you see text:huffmanCode, I meant text~huffmanCode in the actual decoding chart
 
 
 
@@ -42,11 +43,21 @@ Main overview:
 
 
 FileParser overview:
-  -A class that parses files. The constructor will perform compression or decompression depends on which mode (c/d) it is given. It should be noted that all symbols that are not in the base64 table, e.g. comma, colon etc. will be ignored.
+  -A class that parses files. The constructor will perform compression or decompression depends on which mode (c/d) it is given. It should be noted that this parser will ignore symbols that are used as delimiters in the decoding chart, i.e. ` and ~ as they are believed to be the least used symbols.
+
+  https://www.wired.com/2013/08/the-rarity-of-the-ampersand/
+
+  ` acts like a comma, and ~ acts like a colon
+  e.g.
+   ~001`a~1110`c~0100`d~0101`e~1001`f~0110`i~0111`n~1000`r~1111`s~000`t~110`u~101`Xtw31NfkuC1==I
+
+  is equivalent to 
+
+   :001,a:1110,c:0100,d:0101 etc.
 
   -Compression: Counts the frequency of all the characters appear in the input file, then generates a huffman code tree table(contains text:huffmanCode pairs) by using a heap-implemented priority queue. Then, by using the table, encodes the original text into base 64 format bitstring, and write it to a file, with the decoding chart. For example, 
 
-    r:001,d:010,e:011,w:000,h:100,l:11,o:101,j+in===C
+     ~001`a~1110`c~0100`d~0101`e~1001`f~0110`i~0111`n~1000`r~1111`s~000`t~110`u~101`Xtw31NfkuC1==I
 
   The last string is the base 64 string, the rest are text:huffmanCode pairs(the decoding chart).
 
@@ -69,7 +80,8 @@ HuffmanTreeTable overview:
 
   -printTable(): displays the content of the table for debugging.
 
-  -makeFile(): makes the table to an decoding chart file, e.g. a:0,M:10,n:11,TWFu
+  -makeFile(): makes the table to an decoding chart file, e.g.
+    a~1110`c~0100`d~0101`e~1001`f~0110`i~0111`n~1000`r~1111`s~000`t~110`u~101`Xtw31NfkuC1==I
 
 
 PriorityQueue overview:

@@ -1,4 +1,4 @@
-class PriorityQueueNode {
+public class PriorityQueueNode {
   HuffmanNode data;
   PriorityQueueNode heapLeft;
   PriorityQueueNode heapRight;

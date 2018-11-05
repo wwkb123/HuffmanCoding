@@ -4,7 +4,20 @@ import java.io.FileWriter;
 import java.io.PrintWriter;
 import java.io.IOException;
 
-//*****This parser will ignore symbols that are not in the base64 table, e.g. comma, colon etc.*****
+/*****
+
+This parser will ignore symbols that are used as delimiters in the decoding chart, i.e. `, ~ as they are believed to be the least used symbols.
+
+https://www.wired.com/2013/08/the-rarity-of-the-ampersand/
+
+` acts like a comma, and ~ acts like a colon
+e.g. ~001`a~1110`c~0100`d~0101`e~1001`f~0110`i~0111`n~1000`r~1111`s~000`t~110`u~101`Xtw31NfkuC1==I
+
+is equivalent to 
+
+ :001,a:1110,c:0100,d:0101 etc.
+
+*****/
 
 
 public class FileParser{
@@ -24,13 +37,14 @@ public class FileParser{
   public FileParser(String fileName, String mode){
     
     try {
+      pw = null; //clean the printwriter
       br = new BufferedReader(new FileReader(fileName));
       this.fileName = fileName.substring(0,fileName.lastIndexOf(".")); //get the file name without the extension, e.g. test.txt -> test
       switch(mode){
         case "c": //compress mode
 
           // character:frequency table
-          int[] freqTable = new int[128]; //ASCII has only 128 common used characters, using array can give us O(1) in accessing and inserting
+          int[] freqTable = new int[128]; //ASCII has only 128 common used characters, using array can give us O(1) and easier accessing and inserting 
 
           String fileContents = "";  //the original text in the file
           
@@ -59,9 +73,10 @@ public class FileParser{
 
 
         case "d": //decompress mode
-          table = new HuffmanTreeTable(); //huffmanCode:text table
-          String encodingChart = br.readLine();
-          String[] encodingChartArr = encodingChart.split(",");
+          table = new HuffmanTreeTable();//huffmanCode:text table
+
+          String encodingChart = getFileContent(br); //get the original text of the file
+          String[] encodingChartArr = encodingChart.split("`");
           String base64String = encodingChartArr[encodingChartArr.length-1]; //the last item is the base64 string
 
           //make a huffmanCode:text table to decompress a base64 format file
@@ -90,8 +105,7 @@ public class FileParser{
 
       //read through the whole file. If reach to end, will return -1
       while (asciiValue > 0) {
-        //ignore those are not in base64 table
-        if(isInBase64(asciiValue)){  
+        if(!isDelimiter(asciiValue)){ //is not ` or ~
           fileContents = fileContents + (char)asciiValue;
           freqTable[asciiValue]++;  //frequency + 1
         }
@@ -112,10 +126,31 @@ public class FileParser{
     }
   }
 
-  //check a value whether is in the base64 table
-  public boolean isInBase64(int asciiValue){
-    // +:43, /:47, 0-9:48-57, A-Z:65-90, a-z:97-122
-    return asciiValue == 43 || asciiValue >= 47 && asciiValue <= 57 || asciiValue >= 65 && asciiValue <= 90 || asciiValue >= 97 && asciiValue <= 122;
+
+  // a helper method that reconstructs the original text of a file to a string for later use
+  public String getFileContent(BufferedReader br){
+    String fileContents = "";
+    //---reading file---/
+    try{
+      
+      int asciiValue = br.read(); //read the ascii value of the first character in the file
+
+      //read through the whole file. If reach to end, will return -1
+      while (asciiValue > 0) { 
+        fileContents = fileContents + (char)asciiValue;
+        asciiValue = br.read();  //next character
+      }
+      //---finish reading file---/
+    }catch(IOException e){
+      System.out.println("Error "+e);
+    }
+    return fileContents;
+  }
+
+  //check whether a value is a delimiter we used in formatting a decoding chart, i.e.  , and :
+  public boolean isDelimiter(int asciiValue){
+    // `->96  ~->126
+    return asciiValue == 96 || asciiValue == 126;
   }
 
   //use the queue to make a text:huffmanCode table
@@ -145,20 +180,21 @@ public class FileParser{
  
 
   public void makeCompressedFile(String fileContents, HuffmanTreeTable table){
-    System.out.println("\nThe original text is "+fileContents);
+    System.out.println("\nThe original text is: "+fileContents);
     String huffmanString = "";
     
     for(char c : fileContents.toCharArray()){
       huffmanString = huffmanString + table.get(c+"");
     }
-    System.out.println("The huffman code is "+huffmanString);
+    System.out.println("The huffman code is: "+huffmanString);
     
     try{
       //encode file
       String encodedStr = Base64.encode(huffmanString);
-      System.out.println("The base64 string is "+encodedStr);
+      System.out.println("The base64 string is: "+encodedStr);
       pw = new PrintWriter(new FileWriter(fileName+compressPostFix));
       table.makeFile(pw, encodedStr);
+      pw.flush(); 
       pw.close();
       System.out.println("\nThe result has been saved in "+fileName+compressPostFix+"\n");
     }catch(IOException e){
@@ -173,7 +209,7 @@ public class FileParser{
     try{
       //decode
       String decodedBitString = Base64.decode(base64String);
-      System.out.println("\nThe decoded bitstring is "+decodedBitString);
+      System.out.println("\nThe decoded bitstring is: "+decodedBitString);
 
       String huffmanCode = ""; //next huffmanCode to be decompressed
       String decodedString = ""; //result
@@ -186,10 +222,11 @@ public class FileParser{
           huffmanCode = ""; //reset
         }
       }
-      System.out.println("The decoded string is "+decodedString);
+      System.out.println("The decoded string is: "+decodedString);
 
       pw = new PrintWriter(new FileWriter(fileName+decompressPostFix));
       pw.print(decodedString); //write
+      pw.flush();
       pw.close();
       System.out.println("\nThe result has been saved in "+fileName+decompressPostFix+"\n");
 
@@ -205,7 +242,7 @@ public class FileParser{
     /* use size-1 to exclude the last item which is the base64 string*/
     for(int i = 0; i < encodingChartArr.length-1; i++){
       //split every text:huffmanCode pair
-      String[] pairArr = encodingChartArr[i].split(":");
+      String[] pairArr = encodingChartArr[i].split("~");
       //  0       1
       // text:huffmanCode
 

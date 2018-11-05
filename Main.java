@@ -5,7 +5,7 @@ Project Description Link = https://docs.google.com/document/d/1rW8ipNNEQ7mglGzWc
 
  */
 
-class Main {
+public class Main {
   //The main routine here. Add other classes as needed
   public static void main(String[] args) {
     Scanner scanner = new Scanner(System.in);

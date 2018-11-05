@@ -45,7 +45,7 @@ public class HuffmanTreeTable extends HashMap{
     HashSet<String> keySet = new HashSet<String>((Set<String>)super.keySet()); //create a set that contains all the keys in the table
     try {
       for (String key : keySet) {
-      pw.print(key+":"+get(key)+",");  //write to file in format text:huffmanCode
+      pw.print(key+"~"+get(key)+"`");  //write to file in format text:huffmanCode
       }
       pw.print(base64Str); //last item, the base64 string
     }catch (NullPointerException np) {
