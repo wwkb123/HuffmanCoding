@@ -10,5 +10,6 @@ class Main {
 
     FileParser compress = new FileParser("test.txt","c");
     FileParser decompress = new FileParser("output.txt","d");
+
   }
 }

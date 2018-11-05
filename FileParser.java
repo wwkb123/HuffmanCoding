@@ -3,10 +3,8 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.PrintWriter;
 import java.io.IOException;
-import java.io.FileOutputStream;
-import java.io.FileInputStream;
-import java.io.File;
-import java.util.Base64;
+
+//*****This parser will ignore symbols that are not on the base64 table, e.g. comma, colon etc.*****
 
 
 public class FileParser{
@@ -15,9 +13,6 @@ public class FileParser{
 
   BufferedReader br; //to read txt file
   PrintWriter pw; //to write txt file
-
-  FileInputStream fis; //to read binary file
-  FileOutputStream fos; //to write binary file
 
   int[] freqTable; // character:frequency table
   
@@ -59,7 +54,6 @@ public class FileParser{
           break;
 
 
-
         case "d": //decompress mode
           table = new HuffmanTreeTable(); //huffmanCode:text table
           String encodingChart = br.readLine();
@@ -67,8 +61,8 @@ public class FileParser{
           String base64String = encodingChartArr[encodingChartArr.length-1]; //the last item is the base64 string
 
           //make a huffmanCode:text table to decompress a base64 format file
-          makeDecompressTable(encodingChartArr, table);
-          makeDecompressedFile(table);
+          //makeDecompressTable(encodingChartArr, table);
+          //makeDecompressedFile(table);
 
           break;
 
@@ -77,9 +71,6 @@ public class FileParser{
     } catch (IOException e) {
       System.out.println("Error Opening File "+e);
     }
-
-
-
 
   }//end of constructor
 
@@ -140,13 +131,9 @@ public class FileParser{
     System.out.println("\nThe huffman code is "+huffmanString);
     
     try{
-      byte[] huffmanByte = huffmanString.getBytes();
-      byte[] encoded = Base64.getEncoder().encode(huffmanByte);
-      fos = new FileOutputStream("output.bin");
-      fos.write(encoded);
-      fos.close();
+      //encode file
       pw = new PrintWriter(new FileWriter("output.txt"));
-      table.makeFile(pw, Base64.getEncoder().encodeToString(huffmanByte));
+      table.makeFile(pw, /*base64String*/);
       pw.close();
     }catch(IOException e){
       System.out.println("Error " + e);
@@ -156,13 +143,7 @@ public class FileParser{
 
   public void makeDecompressedFile(HuffmanTreeTable table){
     try{
-      File file = new File("output.bin");
-      fis = new FileInputStream("output.bin");
-      byte[] decoded = new byte[(int) file.length()];
-      fis.read(decoded);
-      fis.close();
-      decoded = Base64.getDecoder().decode(decoded);
-      String result = new String(decoded);
+      //decode to file
 
       String huffmanCode = ""; //next huffmanCode to be decompressed
       String decodedString = ""; //result
