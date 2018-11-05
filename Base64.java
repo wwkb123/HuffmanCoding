@@ -1,7 +1,6 @@
-import java.util.HashMap;
 public class Base64{
 
-  final String characterSet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+  final static String characterSet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
 
   public static String encode(String bitstring){
@@ -55,7 +54,7 @@ public class Base64{
     return bitstring;
   }
 
-  public String binaryToString(String bitstring){
+  public static String binaryToString(String bitstring){
     /*
       Java doc:
         Integer.parseInt(binary,2) // binary to decimal
@@ -68,7 +67,7 @@ public class Base64{
 
 
   //convert a string character to base 64 binary string, e.g. A => 000000
-  public String stringtoBinary(String text){
+  public static String stringtoBinary(String text){
   
     /*
       Java doc:

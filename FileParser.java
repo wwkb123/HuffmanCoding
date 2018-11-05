@@ -13,14 +13,19 @@ public class FileParser{
 
   BufferedReader br; //to read txt file
   PrintWriter pw; //to write txt file
+  String fileName;
+  static final String compressPostFix = "_c.txt";
+  static final String decompressPostFix = "_d.txt";
 
   int[] freqTable; // character:frequency table
+
   
 
   public FileParser(String fileName, String mode){
     freqTable = new int[128]; //ASCII has only 128 common used characters
     try {
       br = new BufferedReader(new FileReader(fileName));
+      this.fileName = fileName.substring(0,fileName.lastIndexOf(".")); //get the file name without the extension, e.g. test.txt -> test
       switch(mode){
         case "c": //compress mode
           String fileContents = "";
@@ -28,13 +33,18 @@ public class FileParser{
           int asciiValue = br.read(); //read the ascii value of the first character in the file
 
           //read through the whole file. If reach to end, will return -1
-          while (asciiValue > 0) {  
-            fileContents = fileContents + (char)asciiValue;
-            freqTable[asciiValue]++;  //frequency + 1
+          while (asciiValue > 0) {
+            //ignore those are not in base64 table
+            if(isInBase64(asciiValue)){  
+              fileContents = fileContents + (char)asciiValue;
+              freqTable[asciiValue]++;  //frequency + 1
+            }
             asciiValue = br.read();  //next character
           }
           //---finish reading file---/
           
+          
+
           printFreqTable(freqTable); //debugging
 
           q = new PriorityQueue();
@@ -61,8 +71,8 @@ public class FileParser{
           String base64String = encodingChartArr[encodingChartArr.length-1]; //the last item is the base64 string
 
           //make a huffmanCode:text table to decompress a base64 format file
-          //makeDecompressTable(encodingChartArr, table);
-          //makeDecompressedFile(table);
+          makeDecompressTable(encodingChartArr, table);
+          makeDecompressedFile(table, base64String);
 
           break;
 
@@ -81,6 +91,12 @@ public class FileParser{
       if(freqTable[i] == 0) continue;
       System.out.println((char)i + " : " + freqTable[i]);
     }
+  }
+
+  //check a value whether is in the base64 table
+  public boolean isInBase64(int asciiValue){
+    // +:43, /:47, 0-9:48-57, A-Z:65-90, a-z:97-122
+    return asciiValue == 43 || asciiValue >= 47 && asciiValue <= 57 || asciiValue >= 65 && asciiValue <= 90 || asciiValue >= 97 && asciiValue <= 122;
   }
 
   //use the queue to make a text:huffmanCode table
@@ -107,6 +123,63 @@ public class FileParser{
   }
 
 
+ 
+
+  public void makeCompressedFile(String fileContents, HuffmanTreeTable table){
+    System.out.println("\nThe original text is "+fileContents);
+    String huffmanString = "";
+    
+    for(char c : fileContents.toCharArray()){
+      huffmanString = huffmanString + table.get(c+"");
+    }
+    System.out.println("The huffman code is "+huffmanString);
+    
+    try{
+      //encode file
+      String encodedStr = Base64.encode(huffmanString);
+      System.out.println("The base64 string is "+encodedStr);
+      pw = new PrintWriter(new FileWriter(fileName+compressPostFix));
+      table.makeFile(pw, encodedStr);
+      pw.close();
+      System.out.println("\nThe result has been saved in "+fileName+compressPostFix+"\n");
+    }catch(IOException e){
+      System.out.println("Error " + e);
+    }
+
+  }
+
+  
+
+  public void makeDecompressedFile(HuffmanTreeTable table, String base64String){
+    try{
+      //decode
+      String decodedBitString = Base64.decode(base64String);
+      System.out.println("\nThe decoded bitstring is "+decodedBitString);
+
+      String huffmanCode = ""; //next huffmanCode to be decompressed
+      String decodedString = ""; //result
+
+
+      for(int i = 0; i < decodedBitString.length(); i++){
+        huffmanCode = huffmanCode + decodedBitString.charAt(i);
+        if(table.containsKey(huffmanCode)){
+          decodedString = decodedString + table.get(huffmanCode);
+          huffmanCode = ""; //reset
+        }
+      }
+      System.out.println("The decoded string is "+decodedString);
+
+      pw = new PrintWriter(new FileWriter(fileName+decompressPostFix));
+      pw.print(decodedString); //write
+      pw.close();
+      System.out.println("\nThe result has been saved in "+fileName+decompressPostFix+"\n");
+
+    }catch(IOException e){
+      System.out.println("Error " + e);
+    }
+  }
+
+
   //make a huffmanCode:text table to decompress a base64 format file
   public void makeDecompressTable(String[] encodingChartArr,HuffmanTreeTable table){
 
@@ -119,46 +192,6 @@ public class FileParser{
 
       //put huffmanCode:text to the table
       table.put(pairArr[1],pairArr[0]);
-    }
-  }
-
-  public void makeCompressedFile(String fileContents, HuffmanTreeTable table){
-    String huffmanString = "";
-    //System.out.println(fileContents);
-    for(char c : fileContents.toCharArray()){
-      huffmanString = huffmanString + table.get(c+"");
-    }
-    System.out.println("\nThe huffman code is "+huffmanString);
-    
-    try{
-      //encode file
-      pw = new PrintWriter(new FileWriter("output.txt"));
-      table.makeFile(pw, /*base64String*/);
-      pw.close();
-    }catch(IOException e){
-      System.out.println("Error " + e);
-    }
-
-  }
-
-  public void makeDecompressedFile(HuffmanTreeTable table){
-    try{
-      //decode to file
-
-      String huffmanCode = ""; //next huffmanCode to be decompressed
-      String decodedString = ""; //result
-
-
-      for(int i = 0; i < result.length(); i++){
-        huffmanCode = huffmanCode + result.charAt(i);
-        if(table.containsKey(huffmanCode)){
-          decodedString = decodedString + table.get(huffmanCode);
-          huffmanCode = ""; //reset
-        }
-      }
-      System.out.println("Result is "+decodedString);
-    }catch(IOException e){
-      System.out.println("Error " + e);
     }
   }
 

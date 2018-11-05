@@ -40,7 +40,7 @@ public class HuffmanTreeTable extends HashMap{
     }
   }
 
-  //make the table to an encoding chart, e.g. a:0,M:10,n:11,MTAwMTE=
+  //make the table to an decoding chart file, e.g. a:0,M:10,n:11,TWFu
   public void makeFile(PrintWriter pw, String base64Str){
     HashSet<String> keySet = new HashSet<String>((Set<String>)super.keySet()); //create a set that contains all the keys in the table
     try {
