@@ -4,7 +4,7 @@ import java.io.FileWriter;
 import java.io.PrintWriter;
 import java.io.IOException;
 
-//*****This parser will ignore symbols that are not on the base64 table, e.g. comma, colon etc.*****
+//*****This parser will ignore symbols that are not in the base64 table, e.g. comma, colon etc.*****
 
 
 public class FileParser{
@@ -14,41 +14,33 @@ public class FileParser{
   BufferedReader br; //to read txt file
   PrintWriter pw; //to write txt file
   String fileName;
-  static final String compressPostFix = "_c.txt";
-  static final String decompressPostFix = "_d.txt";
+  static final String compressPostFix = "_c.txt"; //to put after a compressed file
+  static final String decompressPostFix = "_d.txt";//to put after a decompressed file
 
-  int[] freqTable; // character:frequency table
+  
 
   
 
   public FileParser(String fileName, String mode){
-    freqTable = new int[128]; //ASCII has only 128 common used characters
+    
     try {
       br = new BufferedReader(new FileReader(fileName));
       this.fileName = fileName.substring(0,fileName.lastIndexOf(".")); //get the file name without the extension, e.g. test.txt -> test
       switch(mode){
         case "c": //compress mode
-          String fileContents = "";
-          //---reading file---/
-          int asciiValue = br.read(); //read the ascii value of the first character in the file
 
-          //read through the whole file. If reach to end, will return -1
-          while (asciiValue > 0) {
-            //ignore those are not in base64 table
-            if(isInBase64(asciiValue)){  
-              fileContents = fileContents + (char)asciiValue;
-              freqTable[asciiValue]++;  //frequency + 1
-            }
-            asciiValue = br.read();  //next character
-          }
-          //---finish reading file---/
+          // character:frequency table
+          int[] freqTable = new int[128]; //ASCII has only 128 common used characters, using array can give us O(1) in accessing and inserting
+
+          String fileContents = "";  //the original text in the file
           
-          
+          //read the file, make a frequency table, and reconstruct the original text for later use
+          fileContents = readFileCountFreq(br, freqTable);
 
           printFreqTable(freqTable); //debugging
 
           q = new PriorityQueue();
-          table = new HuffmanTreeTable(); //text:huffmanCode table
+          
 
           //inserting nodes to the queue
           for(int i = 0; i < freqTable.length; i++){
@@ -58,6 +50,8 @@ public class FileParser{
           }
           //finish inserting
 
+          //make a text:huffmanCode table
+          table = new HuffmanTreeTable(); 
           makeHuffmanTreeTable(q, table);
           table.printTable(); //debugging
           makeCompressedFile(fileContents,table);
@@ -84,6 +78,31 @@ public class FileParser{
 
   }//end of constructor
 
+
+
+  //a method that reads a file, counts frequency of all characters appear in the file, saves it to an int array. Also reconstructs the original text to a string for later use
+  public String readFileCountFreq(BufferedReader br, int[] freqTable){
+    String fileContents = "";
+    //---reading file---/
+    try{
+      
+      int asciiValue = br.read(); //read the ascii value of the first character in the file
+
+      //read through the whole file. If reach to end, will return -1
+      while (asciiValue > 0) {
+        //ignore those are not in base64 table
+        if(isInBase64(asciiValue)){  
+          fileContents = fileContents + (char)asciiValue;
+          freqTable[asciiValue]++;  //frequency + 1
+        }
+        asciiValue = br.read();  //next character
+      }
+      //---finish reading file---/
+    }catch(IOException e){
+      System.out.println("Error "+e);
+    }
+    return fileContents;
+  }
 
   public void printFreqTable(int[] freqTable){
     System.out.println("Character : Frequency");

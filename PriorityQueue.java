@@ -229,6 +229,7 @@ public class PriorityQueue {
     return nextPosition; //next position should be equal to the size
   }
 
+  //print the heap in level order
   public void levelOrderPrint(){
     System.out.println("\nLevel Order Print:");
     if(root == null) {
@@ -270,6 +271,7 @@ public class PriorityQueue {
 				level++;  // to the next level
 			}
 		}
+    System.out.println("\n");
 	}
 		
 	public void printSpace(int number){

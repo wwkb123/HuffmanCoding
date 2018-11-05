@@ -11,12 +11,12 @@ class Main {
     Scanner scanner = new Scanner(System.in);
 
     while(true){
-      System.out.println("Type c or C to compress a file, d or D to decompress a file, or exit to exit:");
+      System.out.println("\n\nType c or C to compress a file, d or D to decompress a file, or exit to exit:");
       String mode = scanner.nextLine().toLowerCase();
       
       checkValidInput(mode);
       
-      System.out.println("Enter the file name:");
+      System.out.println("Enter the file name with extension(e.g. test.txt):");
       String fileName = scanner.nextLine();
 
       if(mode.equals("c")){

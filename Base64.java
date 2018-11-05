@@ -2,17 +2,23 @@ public class Base64{
 
   final static String characterSet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
-
+  //e.g. return "l+lr===A"
   public static String encode(String bitstring){
     String result = "";
-    while(bitstring.length() >= 6){ 
+    while(bitstring.length() > 6){ 
       //handle the first 6 digits of bits every time
       result = result + binaryToString(bitstring.substring(0,6));
       bitstring = bitstring.substring(6,bitstring.length());
     }
 
+    //exactly 6 digits left
+    if(bitstring.length() == 6){
+      result = result + binaryToString(bitstring.substring(0,6));
+      return result;
+    }
+
     //padding the last 1-5 digits
-    while(bitstring.length() < 6){
+    while(bitstring.length() > 0 && bitstring.length() < 6){
       result = result + "=";
       bitstring = "0" + bitstring;
     }
@@ -24,6 +30,7 @@ public class Base64{
   public static String decode(String encodedString){
     String bitstring = "";
     int paddingIndex = -1;
+
     for(int i = 0; i < encodedString.length(); i++){
       String currChar = encodedString.charAt(i)+""; //cast to string
       if(!currChar.equals("=")){ //normal character
@@ -48,12 +55,12 @@ public class Base64{
       }
 
       bitstring = bitstring + lastStr; //add it to the back of the bitstring
-
     }
 
     return bitstring;
   }
 
+  //convert a base 64 binary string(no padding) to a string character, e.g. 0 => A
   public static String binaryToString(String bitstring){
     /*
       Java doc:
