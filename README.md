@@ -11,7 +11,7 @@ Note:
 2. To make this documentation more readable, some complex logics may not be explained here as they will take a lot of space. They are explained inside the class instead.
 3. The huffman codes generated in this program can be different from other implementations as I didn't ask the nodes to swap when they have the same count. But since this will still make a correct corresponding Huffman tree table, I can still get correct compressions and decompressions.
 4. Only repl.it, somehow I cannot compress a file and decompress it immediately. I must exit the program and run it again to decompress the file. Also, sometimes if the input file is too large, repl's buffer will write wrong outputs to the file. Please re-open this repl when this occurs.
-5. Originally, I used format a:0101,b:000,  to represent the decoding chart. Since I want to include other symbols like , :  as well so I change the format to a~0101`b~000, where ~ acts like colon(:) and ` acts like comma(,). So in some parts of the documentation/comment, if you see text:huffmanCode, I meant text~huffmanCode in the actual decoding chart
+5. Originally, I used format a:0101,b:000,  to represent the decoding chart. Since I want to include other symbols like , :  as well so I change the format to a\~0101\`b~000, where \~ acts like colon(\:) and \` acts like comma(,). So in some parts of the documentation/comment, if you see text\:huffmanCode, I meant text\~huffmanCode in the actual decoding chart
 
 
 
@@ -49,9 +49,9 @@ FileParser overview:
 
   https://www.wired.com/2013/08/the-rarity-of-the-ampersand/
 
-  ` acts like a comma, and ~ acts like a colon
+  \` acts like a comma, and \~ acts like a colon
   e.g.
-   ~001`a~1110`c~0100`d~0101`e~1001`f~0110`i~0111`n~1000`r~1111`s~000`t~110`u~101`Xtw31NfkuC1==I
+   ~001\`a\~1110\`c\~0100\`d~0101\`e\~1001\`f\~0110\`i\~0111\`n\~1000\`r\~1111\`s\~000\`t\~110\`u\~101\`Xtw31NfkuC1==I
 
   is equivalent to 
 
@@ -83,7 +83,7 @@ HuffmanTreeTable overview:
   -printTable(): displays the content of the table for debugging.
 
   -makeFile(): makes the table to an decoding chart file, e.g.
-    a~1110`c~0100`d~0101`e~1001`f~0110`i~0111`n~1000`r~1111`s~000`t~110`u~101`Xtw31NfkuC1==I
+   a\~1110\`c\~0100\`d\~0101\`e\~1001\`f\~0110\`i\~0111\`n\~1000\`r\~1111\`s\~000\`t\~110\`u\~101\`Xtw31NfkuC1==I
 
 
 PriorityQueue overview:
@@ -94,11 +94,13 @@ PriorityQueue overview:
   -Modified path() and Node() a bit to adapt my logics. Rename Node() to getNode().
 
   ***levelOrderPrint(): A method to print the heap content in level order, to help visualizing what is happening in the heap (If the heap is big, the output may be distorted a bit). For example,
-
+  
+```
       2  
     3    2  
-  3  *  *  * 
-
+  3  *  *  *
+  
+```
   '*' indicates the node is null. 
 
   -More detailed logics such as insert/remove/bubble up/bubble down are explained inside the class
@@ -106,4 +108,4 @@ PriorityQueue overview:
 
 
 PriorityQueueNode overview:
-  -Basically most of the parts are acquired from Professor Liu's repl. Add proper initializations in the construtor.
+ -Basically most of the parts are acquired from Professor Liu's repl. Add proper initializations in the construtor.
