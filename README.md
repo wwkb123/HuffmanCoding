@@ -51,7 +51,7 @@ FileParser overview:
 
   \` acts like a comma, and \~ acts like a colon
   e.g.
-   ~001\`a\~1110\`c\~0100\`d~0101\`e\~1001\`f\~0110\`i\~0111\`n\~1000\`r\~1111\`s\~000\`t\~110\`u\~101\`Xtw31NfkuC1==I
+   \~001\`a\~1110\`c\~0100\`d\~0101\`e\~1001\`f\~0110\`i\~0111\`n\~1000\`r\~1111\`s\~000\`t\~110\`u\~101\`Xtw31NfkuC1==I
 
   is equivalent to 
 
